@@ -25,6 +25,7 @@ let token = "EAABqfz24WwEBAEzHI3iuai1pyCgmf2Syw74fwZCfW4y89kKItk4jyZCwnOXBRIUA2j
 app.get('/webhook/', function(req, res) {
 	if (req.query['hub.verify_token'] === "testing") {
 		res.send(req.query['hub.challenge'])
+		console.log(res);
 	}
 	res.send("Wrong token")
 })
@@ -36,6 +37,7 @@ app.post('/webhook/', function(req, res) {
 		let sender = event.sender.id
 		if (event.message && event.message.text) {
 			let text = event.message.text
+			console.log(text);
 			sendText(sender, "Text echo: " + text.substring(0, 100))
 		}
 	}
