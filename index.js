@@ -3,7 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-
+var User = require('./isadas');
 const app = express()
 
 app.set('port', (process.env.PORT || 5000))
@@ -22,27 +22,44 @@ let token = "EAABqfz24WwEBAEzHI3iuai1pyCgmf2Syw74fwZCfW4y89kKItk4jyZCwnOXBRIUA2j
 
 // Facebook
 
-app.get('/webhook/', function(req, res) {
+app.get('/webhook', function(req, res) {
 	if (req.query['hub.verify_token'] === "testing") {
 		res.send(req.query['hub.challenge'])
 		console.log(res);
 	}
-	res.send("Wrong token")
+	else res.send("Wrong token")
 })
 
-app.post('/webhook/', function(req, res) {
+
+
+
+
+
+app.post('/webhook', function(req, res) {
 	let messaging_events = req.body.entry[0].messaging
 	for (let i = 0; i < messaging_events.length; i++) {
 		let event = messaging_events[i]
 		let sender = event.sender.id
+		if(event.message&&event.message.text&&sender!='798041853705514'){
+			var test = new User({
+			  name: sender
+			});
+			// call the built-in save method to save to the database
+			test.save(function(err) {
+			  if (err) throw err;
+
+			  console.log('User saved successfully!');
+			});
+		}
 		if (event.message && event.message.text) {
 			let text = event.message.text
-			console.log(text);
-			sendText(sender, "Text echo: " + text.substring(0, 100))
+			sendText(sender,  text.substring(0, 100))
 		}
-	}
 	res.sendStatus(200);
+}
 })
+
+
 
 function sendText(sender, text) {
 	let messageData = {text: text}
@@ -51,7 +68,7 @@ function sendText(sender, text) {
 		qs : {access_token: token},
 		method: "POST",
 		json: {
-			recipient: {id: sender},
+			recipient: { id: sender},
 			message : messageData,
 		}
 	}, function(error, response, body) {
