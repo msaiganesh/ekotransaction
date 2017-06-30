@@ -42,6 +42,10 @@ npm start
 ```
 ngrok http 8000 
 ```
+### use api.ai to naturally process the text and get the reply ,
+ use nlp.js to get response of processed data and push it into database for transaction.
+ the response is in form of json and manipulate ,send text and session id as a parameter for the response from the nlp .
+ 
 
 
 
